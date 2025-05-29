@@ -15,8 +15,8 @@ static bool objetPresentArriere = false;
 #define RPLIDAR_MOTOR 23 // Pin du moteur du Lidar
 
 #define PWM_CHANNEL 0        // Canal PWM pour le contrôle du moteur
-#define RECTANGLE_X 2000.0f  // Largeur du terrain en mm
-#define RECTANGLE_Y 3000.0f  // Hauteur du terrain en mm
+#define RECTANGLE_X 3000.0f  // Largeur du terrain en mm
+#define RECTANGLE_Y 2000.0f  // Hauteur du terrain en mm
 #define DISTANCE_LIMITE 120  // Marge de sécurité pour les bords du terrain
 #define ANGLE_RESOLUTION 360 // Nombre de points que l'on prend sur un tour du lidar
 
@@ -64,10 +64,7 @@ void bus_can(void *parameters)
             odo_y_robot = fusion_octet(rxMsg.data[2], rxMsg.data[3]);
             theta_robot = fusion_octet(rxMsg.data[4], rxMsg.data[5]);
 
-            // Serial.printf("Odo x robot %4.2d ", odo_x_robot);
-            // Serial.printf("Odo y robot %4.2d ", odo_y_robot);
-            // Serial.printf("theta_robot %4.2d ", theta_robot);
-            // Serial.println();
+            // Serial.printf("%hd %hd %hd\n", odo_x_robot, odo_y_robot, theta_robot);
 
             rxMsg.id = 0;
 
@@ -88,6 +85,9 @@ void gestion_strategie(void *parameters)
 
     TickType_t xLastWakeTime;
     xLastWakeTime = xTaskGetTickCount();
+
+    sendCANMessage(ESP32_RESTART, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
     while (1)
     {
         start_match = digitalRead(PIN_READ_FDC);
@@ -95,6 +95,7 @@ void gestion_strategie(void *parameters)
 //   Serial.printf("Val couleur %d ", choix_couleur_equipe);
 //     Serial.printf("start_match %d ", start_match);
 // Serial.println();
+//        Serial.printf("etat %d\n", etat_match);
 #ifdef HOMOLOGATION
         switch (etat_match)
         {
@@ -109,18 +110,14 @@ void gestion_strategie(void *parameters)
             }
             else
             {
-                sendCANMessage(ESP32_RESTART, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-                sendCANMessage(INTERRUPTEUR_BATT1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-                sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
-                sendCANMessage(INTERRUPTEUR_BATT3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+                sendCANMessage(INTERRUPTEUR_BATT1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+                sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+                sendCANMessage(INTERRUPTEUR_BATT3, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
             }
             break;
         case 1:
-            Serial.printf("Esp restart ");
-            sendCANMessage(ESP32_RESTART, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            // Metttre les 5 secondes pour laisser le temps au robot de s'immobiliser
-            delay(5000);
+            sendCANMessage(START_ROBOT_MATCH, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0);
             if (choix_couleur_equipe == 0)
             {
                 Serial.printf("Strat jaune + recalage ");
@@ -132,11 +129,10 @@ void gestion_strategie(void *parameters)
                 strategie_bleu_homologation();
             }
             Serial.printf("Start match ");
-            sendCANMessage(START_ROBOT_MATCH, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0);
             delay(100);
             Serial.printf("ON2 ");
 
-            sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
+//            sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
             delay(100);
             Serial.printf("Message envoyé et début de match \n");
             etat_match = 2;
@@ -456,36 +452,44 @@ void loop()
             }*/
             if (minAvantDist < 10000)
             {
-                if (!objetPresentAvant)
-                {
+                // if (!objetPresentAvant)
+                // {
                     objetPresentAvant = true;
-                    startDetectionAvant = millis();
-                }
-                else if (millis() - startDetectionAvant >= 500)
-                {
-                    Serial.printf("Objet devant détecté depuis plus de 500 ms\n");
-                    sendCANMessage(LIDAR, 0, 0, 8, AVANT_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0, 0);
-                }
+                //     startDetectionAvant = millis();
+                // }
+                // else if (millis() - startDetectionAvant >= 50)
+                // {
+                    Serial.printf("Objet devant\n");
+                    sendCANMessage(LIDAR, 0, 0, 2, AVANT_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0, 0);
+                // }
             }
             else
             {
+                if (objetPresentAvant) {
+                    Serial.printf("Fin objet devant\n");
+                    sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+                }
                 objetPresentAvant = false;
             }
             if (minArriereDist < 10000)
             {
-                if (!objetPresentArriere)
-                {
+                // if (!objetPresentArriere)
+                // {
                     objetPresentArriere = true;
-                    startDetectionArriere = millis();
-                }
-                else if (millis() - startDetectionArriere >= 500)
-                {
-                    Serial.printf("Objet derrière détecté depuis plus de 500 ms\n");
-                    sendCANMessage(LIDAR, 0, 0, 8, ARRIERE_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0, 0);
-                }
+                //     startDetectionArriere = millis();
+                // }
+                // else if (millis() - startDetectionArriere >= 50)
+                // {
+                    Serial.printf("Objet derrière\n");
+                    sendCANMessage(LIDAR, 0, 0, 2, 0, ARRIERE_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0);
+                // }
             }
             else
             {
+                if (objetPresentArriere) {
+                    Serial.printf("Fin objet derrière\n");
+                    sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+                }
                 objetPresentArriere = false;
             }
         }

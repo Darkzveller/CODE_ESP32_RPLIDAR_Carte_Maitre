@@ -22,8 +22,8 @@ void strategie_jaune_homologation()
   // uint16_t x_homologation[nbr_ps] = {1225, 750, 750, 300};
   // uint16_t y_homologation[nbr_ps] = {750, 750, 1500, 1800};
 
-  uint16_t x_homologation[nbr_strat] = {600};
-  uint16_t y_homologation[nbr_strat] = {1500};
+  uint16_t x_homologation[nbr_strat] = {1225};
+  uint16_t y_homologation[nbr_strat] = {600};
   // uint16_t t_homologation[nbr_strat] = {-45};
 
   for (int i = 0; i < nbr_strat; i++)
@@ -50,8 +50,8 @@ void strategie_bleu_homologation()
 
   nbr_strat = 1;
 
-  uint16_t x_homologation[nbr_strat] = {3000 - 600};
-  uint16_t y_homologation[nbr_strat] = {3000 - 1500};
+  uint16_t x_homologation[nbr_strat] = {3000 - 1225};
+  uint16_t y_homologation[nbr_strat] = {600};
 
   for (int i = 0; i < nbr_strat; i++)
   {
@@ -84,6 +84,7 @@ void send_recalage(int x, int y, int theta)
   uint8_t lowByte_theta = cmd_theta & 0xFF;         // Octet de poids faible
   uint8_t highByte_theta = (cmd_theta >> 8) & 0xFF; // Octet de poids fort
 
+  delay(40);
   sendCANMessage(RECALAGE, 0, 0, 8, 0, 1, highByte_x, lowByte_x, 0, 0, 0, 0);
   delay(40);
   sendCANMessage(RECALAGE, 0, 0, 8, 0, 2, highByte_y, lowByte_y, 0, 0, 0, 0);

@@ -90,7 +90,7 @@ void sendCANMessage(int id, int ext, int rtr, int length, int data0, int data1, 
     // Envoi du message avec un délai d'attente de 1000 ms
     if (twai_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK)
     {
-        Serial.println("Message envoyé avec succès.");
+//        Serial.println("Message envoyé avec succès.");
     }
     else
     {
