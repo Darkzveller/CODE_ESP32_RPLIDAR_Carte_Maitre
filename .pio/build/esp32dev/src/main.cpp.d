@@ -133,6 +133,7 @@
  C:/Users/elkat/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/elkat/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/elkat/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- src/CAN/src/CAN.h src/CAN/src/ESP32SJA1000.h src/CAN/src/CANController.h \
- src/RPLidar.h src/inc/rptypes.h src/inc/rplidar_cmd.h \
- src/inc/rplidar_protocol.h src/ident_crac.h
+ lib/Variable/Variable.h lib/CAN_ESP32E/CAN_ESP32E.h lib/ID_CAN/ID_CAN.h \
+ lib/USE_FUNCTION/USE_FUNCTION.h src/RPLidar.h src/inc/rptypes.h \
+ src/inc/rplidar_cmd.h src/inc/rplidar_protocol.h \
+ lib/STRATEGIE/STRATEGIE.h
