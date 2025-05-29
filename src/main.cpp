@@ -5,8 +5,6 @@
 
 #include "ident_crac.h"
 
-// #define RPLIDAR_MOTOR 15      // Pin du moteur du Lidar
-// Vieille carte broche différente : 26
 #define RPLIDAR_MOTOR 23      // Pin du moteur du Lidar
 
 #define PWM_CHANNEL 0         // Canal PWM pour le contrôle du moteur
