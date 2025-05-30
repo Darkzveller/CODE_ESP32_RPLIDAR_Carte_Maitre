@@ -6,6 +6,9 @@
 #include <RPLidar.h>
 #include <math.h>
 #include "STRATEGIE.h"
+
+volatile bool finMvt = false; // Variable pour indiquer si le mouvement est terminé
+
 static unsigned long startDetectionAvant = 0;
 static bool objetPresentAvant = false;
 
@@ -25,6 +28,8 @@ float distanceData[ANGLE_RESOLUTION] = {0}; // Tableau pour stocker les distance
 
 #define MAX_ROBOTS 1        // Nombre maximal de robots à détecter
 #define MOVING_AVG_WINDOW 5 // Taille de la fenêtre pour la moyenne mobile
+
+TaskHandle_t hStrategie = NULL; // Handle pour la tâche de gestion de la stratégie
 
 // Structure pour stocker les informations sur les robots détectés
 struct RobotInfo
@@ -69,6 +74,10 @@ void bus_can(void *parameters)
             rxMsg.id = 0;
 
             break;
+        case 0x35: // ID pour la fin de mouvement
+            finMvt = true;
+            break;
+
         case 0:
 
             break;
@@ -77,6 +86,19 @@ void bus_can(void *parameters)
         }
 
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(Tcan));
+    }
+}
+
+void timerFinMatch(void *parameters)
+{
+    delay(99000);
+    vTaskSuspend(hStrategie);
+    sendCANMessage(INTERRUPTEUR_BATT1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+    sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+    sendCANMessage(INTERRUPTEUR_BATT3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+    while (1)
+    {
+        delay(1000);
     }
 }
 
@@ -103,10 +125,20 @@ void gestion_strategie(void *parameters)
 
             if (start_match)
             {
-                Serial.printf("Start match ");
-                Serial.println(start_match);
+                // Serial.printf("Start match ");
+                // Serial.println(start_match);
 
                 etat_match = 1;
+
+    xTaskCreate(
+        timerFinMatch,   // nom de la fonction
+        "timerFinMatch", // nom de la tache que nous venons de vréer
+        10000,               // taille de la pile en octet
+        NULL,                // parametre
+        11,                  // tres haut niveau de priorite
+        NULL                 // descripteur
+    );
+
             }
             else
             {
@@ -129,11 +161,6 @@ void gestion_strategie(void *parameters)
                 strategie_bleu_homologation();
             }
             Serial.printf("Start match ");
-            delay(100);
-            Serial.printf("ON2 ");
-
-//            sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
-            delay(100);
             Serial.printf("Message envoyé et début de match \n");
             etat_match = 2;
             break;
@@ -318,7 +345,7 @@ void setup()
         10000,               // taille de la pile en octet
         NULL,                // parametre
         10,                  // tres haut niveau de priorite
-        NULL                 // descripteur
+        &hStrategie                 // descripteur
     );
 }
 
@@ -481,14 +508,14 @@ void loop()
                 // else if (millis() - startDetectionArriere >= 50)
                 // {
                     Serial.printf("Objet derrière\n");
-                    sendCANMessage(LIDAR, 0, 0, 2, 0, ARRIERE_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0);
+//                    sendCANMessage(LIDAR, 0, 0, 2, 0, ARRIERE_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0);
                 // }
             }
             else
             {
                 if (objetPresentArriere) {
                     Serial.printf("Fin objet derrière\n");
-                    sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+//                    sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
                 objetPresentArriere = false;
             }

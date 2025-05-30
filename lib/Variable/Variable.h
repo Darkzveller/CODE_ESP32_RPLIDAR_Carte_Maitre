@@ -17,7 +17,7 @@ extern int etat_match ;
 
 
 // Parametre FreeRTOS
-#define Te 2.5
+#define Te 10
 #define Tcan 10
 
 //***********Variable pour détection lidar******************* */

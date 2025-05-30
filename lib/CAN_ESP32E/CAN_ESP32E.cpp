@@ -90,7 +90,7 @@ void sendCANMessage(int id, int ext, int rtr, int length, int data0, int data1, 
     // Envoi du message avec un délai d'attente de 1000 ms
     if (twai_transmit(&message, pdMS_TO_TICKS(10)) == ESP_OK)
     {
-//        Serial.println("Message envoyé avec succès.");
+        //        Serial.println("Message envoyé avec succès.");
     }
     else
     {
@@ -102,6 +102,8 @@ void readCANMessage()
 {
     // Exemple : Réception d'un message CAN
     twai_message_t rx_message;
+
+    rxMsg.id = 0; // Réinitialisation de l'ID du message reçu
 
     if (twai_receive(&rx_message, pdMS_TO_TICKS(Tcan)) == ESP_OK)
     { /*
@@ -117,39 +119,39 @@ void readCANMessage()
          }
          Serial.println();
     */
-            if (messageCANForMe(rx_message.identifier))
-            {
-                /*
-                // Si l'ID est valide, traitement du message
-                Serial.print(" Message reçu : ID=");
-                Serial.print(rx_message.identifier, HEX); // Affiche l'ID du message en hexadécimal
-                Serial.print(" EXT=");
-                Serial.print(rx_message.extd); // Affiche le Data Length Code (DLC)
-                Serial.print(" RTR=");
-                Serial.print(rx_message.rtr); // Affiche le Data Length Code (DLC)
+        if (messageCANForMe(rx_message.identifier))
+        {
+            /*
+            // Si l'ID est valide, traitement du message
+            Serial.print(" Message reçu : ID=");
+            Serial.print(rx_message.identifier, HEX); // Affiche l'ID du message en hexadécimal
+            Serial.print(" EXT=");
+            Serial.print(rx_message.extd); // Affiche le Data Length Code (DLC)
+            Serial.print(" RTR=");
+            Serial.print(rx_message.rtr); // Affiche le Data Length Code (DLC)
 
-                Serial.print(" DLC=");
-                Serial.print(rx_message.data_length_code); // Affiche le Data Length Code (DLC)
-                Serial.print(" Data=");
-    */
-                rxMsg.id = rx_message.identifier;
-                rxMsg.extd = rx_message.extd;
-                rxMsg.rtr = rx_message.rtr;
-                rxMsg.lenght = rx_message.data_length_code;
-                // Affichage des données du message
-                for (int i = 0; i < rx_message.data_length_code; i++)
-                {
-                    rxMsg.data[i] = rx_message.data[i];
-                    // Serial.print(rxMsg.data[i], HEX); // Affiche chaque octet de données en hexadécimal
-                    // Serial.print(" ");
-                }
-            } /*
-         else
-         {
-             // Si l'ID n'est pas pris en compte, on l'ignore
-             Serial.print(" Message reçu avec ID non pris en compte : ");
-             Serial.print(rx_message.identifier, HEX);
-         }*/
+            Serial.print(" DLC=");
+            Serial.print(rx_message.data_length_code); // Affiche le Data Length Code (DLC)
+            Serial.print(" Data=");
+*/
+            rxMsg.id = rx_message.identifier;
+            rxMsg.extd = rx_message.extd;
+            rxMsg.rtr = rx_message.rtr;
+            rxMsg.lenght = rx_message.data_length_code;
+            // Affichage des données du message
+            for (int i = 0; i < rx_message.data_length_code; i++)
+            {
+                rxMsg.data[i] = rx_message.data[i];
+                // Serial.print(rxMsg.data[i], HEX); // Affiche chaque octet de données en hexadécimal
+                // Serial.print(" ");
+            }
+        } /*
+     else
+     {
+         // Si l'ID n'est pas pris en compte, on l'ignore
+         Serial.print(" Message reçu avec ID non pris en compte : ");
+         Serial.print(rx_message.identifier, HEX);
+     }*/
     } /*
      else
      {
@@ -158,7 +160,6 @@ void readCANMessage()
  */
 }
 
-
 bool messageCANForMe(uint16_t ID)
 {
     switch (ID)
@@ -166,7 +167,9 @@ bool messageCANForMe(uint16_t ID)
     case ODO_SEND:
         return true;
         break;
-
+    case 0x35: // ID pour la fin de mouvement
+        return true;
+        break;
     default:
         return false;
         break;
