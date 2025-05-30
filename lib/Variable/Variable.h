@@ -22,7 +22,7 @@ extern int etat_match ;
 
 //***********Variable pour détection lidar******************* */
 #define AVANT_LIDAR_DETECTER 1
-#define ARRIERE_LIDAR_DETECTER 1
+#define ARRIERE_LIDAR_DETECTER 0
 
 //***********LOOP******************* */
 

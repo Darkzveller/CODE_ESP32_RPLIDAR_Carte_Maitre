@@ -494,6 +494,7 @@ void loop()
             {
                 if (objetPresentAvant) {
                     Serial.printf("Fin objet devant\n");
+                    delay(1000);
                     sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
                 objetPresentAvant = false;
