@@ -6,6 +6,9 @@
 #include <RPLidar.h>
 #include <math.h>
 #include "STRATEGIE.h"
+#include <Wire.h>
+#include "rgb_lcd.h"
+rgb_lcd lcd;
 
 volatile bool finMvt = false; // Variable pour indiquer si le mouvement est terminé
 
@@ -114,14 +117,26 @@ void gestion_strategie(void *parameters)
     {
         start_match = digitalRead(PIN_READ_FDC);
         static bool choix_couleur_equipe = digitalRead(PIN_CHOIX_COULEUR);
-//   Serial.printf("Val couleur %d ", choix_couleur_equipe);
-//     Serial.printf("start_match %d ", start_match);
-// Serial.println();
-//        Serial.printf("etat %d\n", etat_match);
+        // Serial.printf("Val couleur ");
+        // Serial.print(choix_couleur_equipe)
+        //     Serial.printf("start_match %d ", start_match);
+        // Serial.println();
+        //        Serial.printf("etat %d\n", etat_match);
+
 #ifdef HOMOLOGATION
         switch (etat_match)
         {
         case 0:
+            if (choix_couleur_equipe == 0)
+            {
+                lcd.clear();
+                lcd.setRGB(255, 255, 0);
+            }
+            else
+            {
+                lcd.clear();
+                lcd.setRGB(0, 0, 255);
+            }
 
             if (start_match)
             {
@@ -330,6 +345,10 @@ void setup()
     setupCAN(1000E3);
     initRPLidarA3M1(20000, 8, 128);
     init_Timer();
+    // Initialisation LCD RGB
+    lcd.begin(16, 2);
+    // Print a message to the LCD.
+    lcd.setRGB(255, 255, 255);
     setup_pin_strategie();
     xTaskCreate(
         bus_can,   // nom de la fonction
@@ -403,7 +422,7 @@ void loop()
 
             for (int i = 0; i < ANGLE_RESOLUTION; i++)
             {
-                if ((i > 45 && i < 135) || (i > 225 && i < 315) || (distanceData[i] <= 100) || (distanceData[i] > 500))
+                if ((i > 45 && i < 135) || (i > 225 && i < 315) || (distanceData[i] <= 100) || (distanceData[i] > 750))
                 {
                     distanceData[i] = 10000;
                 }

@@ -136,4 +136,8 @@
  lib/Variable/Variable.h lib/CAN_ESP32E/CAN_ESP32E.h lib/ID_CAN/ID_CAN.h \
  lib/USE_FUNCTION/USE_FUNCTION.h src/RPLidar.h src/inc/rptypes.h \
  src/inc/rplidar_cmd.h src/inc/rplidar_protocol.h \
- lib/STRATEGIE/STRATEGIE.h
+ lib/STRATEGIE/STRATEGIE.h \
+ C:/Users/elkat/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/elkat/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ .pio/libdeps/esp32dev/Grove\ -\ LCD\ RGB\ Backlight/rgb_lcd.h \
+ C:/Users/elkat/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h
