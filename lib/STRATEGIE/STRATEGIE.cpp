@@ -67,7 +67,7 @@ void strategie_jaune_homologation()
 
   send_recalage(1225, 139, 90);
   delay(200);
- 
+
   // sendCANMessage(RECALAGE, 0, 0, 8, 2, 2, 0, 139, 0, 0, 0, 0);
   // delay(200);
 
@@ -76,7 +76,7 @@ void strategie_jaune_homologation()
   sendCANMessage(LACHER_ARRIERE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   delay(500);
 
-  send_ligne_droite(400);
+  send_ligne_droite(200);
   attente(5000);
   delay(200);
 
@@ -84,20 +84,24 @@ void strategie_jaune_homologation()
   attente(5000);
   delay(200);
 
-  send_ligne_droite(900);
+  send_ligne_droite(1000);
   attente(5000);
   delay(200);
 
   send_rotation(45);
   attente(5000);
   delay(200);
+  send_ligne_droite(250);
+  attente(1000);
+  delay(200);
 
   while ((millis() - debut) < 92000)
   {
+    sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
     delay(100);
   }
 
-  send_ligne_droite(200);
+  send_ligne_droite(400);
   delay(2000);
 
   // nbr_strat = 1;
@@ -132,37 +136,46 @@ void strategie_bleu_homologation()
 
   send_recalage(1775, 139, 90);
   delay(200);
-  
+
   // sendCANMessage(RECALAGE, 0, 0, 8, 2, 2, 0, 139, 0, 0, 0, 0);
   delay(200);
 
+  // Je fais une marche arriere
   send_ligne_droite(-80);
   delay(1000);
   sendCANMessage(LACHER_ARRIERE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   delay(500);
 
-  send_ligne_droite(400);
+  // J'avance de 300 mm
+  send_ligne_droite(200);
   attente(5000);
   delay(200);
-
+  // Je tourne de 45 degres
   send_rotation(45);
   attente(5000);
   delay(200);
 
-  send_ligne_droite(900);
+  // J'avance de 1000 mm
+  send_ligne_droite(1000);
   attente(5000);
   delay(200);
 
+  // Je tourne de -45 degres
   send_rotation(-45);
   attente(5000);
   delay(200);
 
+  send_ligne_droite(250);
+  attente(1000);
+  delay(200);
+
   while ((millis() - debut) < 92000)
   {
+    sendCANMessage(INTERRUPTEUR_BATT2, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0);
     delay(100);
   }
-
-  send_ligne_droite(200);
+  // sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+  send_ligne_droite(400);
   delay(2000);
 
   // nbr_strat = 1;

@@ -130,15 +130,14 @@ void gestion_strategie(void *parameters)
 
                 etat_match = 1;
 
-    xTaskCreate(
-        timerFinMatch,   // nom de la fonction
-        "timerFinMatch", // nom de la tache que nous venons de vréer
-        10000,               // taille de la pile en octet
-        NULL,                // parametre
-        11,                  // tres haut niveau de priorite
-        NULL                 // descripteur
-    );
-
+                xTaskCreate(
+                    timerFinMatch,   // nom de la fonction
+                    "timerFinMatch", // nom de la tache que nous venons de vréer
+                    10000,           // taille de la pile en octet
+                    NULL,            // parametre
+                    11,              // tres haut niveau de priorite
+                    NULL             // descripteur
+                );
             }
             else
             {
@@ -150,6 +149,7 @@ void gestion_strategie(void *parameters)
             break;
         case 1:
             sendCANMessage(START_ROBOT_MATCH, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0);
+
             if (choix_couleur_equipe == 0)
             {
                 Serial.printf("Strat jaune + recalage ");
@@ -345,7 +345,7 @@ void setup()
         10000,               // taille de la pile en octet
         NULL,                // parametre
         10,                  // tres haut niveau de priorite
-        &hStrategie                 // descripteur
+        &hStrategie          // descripteur
     );
 }
 
@@ -403,7 +403,7 @@ void loop()
 
             for (int i = 0; i < ANGLE_RESOLUTION; i++)
             {
-                if ((i > 45 && i < 135) || (i > 225 && i < 315) || (distanceData[i] <= 100) || (distanceData[i] > 1000))
+                if ((i > 45 && i < 135) || (i > 225 && i < 315) || (distanceData[i] <= 100) || (distanceData[i] > 500))
                 {
                     distanceData[i] = 10000;
                 }
@@ -481,20 +481,21 @@ void loop()
             {
                 // if (!objetPresentAvant)
                 // {
-                    objetPresentAvant = true;
+                objetPresentAvant = true;
                 //     startDetectionAvant = millis();
                 // }
                 // else if (millis() - startDetectionAvant >= 50)
                 // {
-                    Serial.printf("Objet devant\n");
-                    sendCANMessage(LIDAR, 0, 0, 2, AVANT_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0, 0);
+                Serial.printf("Objet devant\n");
+                sendCANMessage(LIDAR, 0, 0, 2, AVANT_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0, 0);
                 // }
             }
             else
             {
-                if (objetPresentAvant) {
+                if (objetPresentAvant)
+                {
                     Serial.printf("Fin objet devant\n");
-                    delay(1000);
+                    // delay(1000);
                     sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
                 objetPresentAvant = false;
@@ -503,20 +504,21 @@ void loop()
             {
                 // if (!objetPresentArriere)
                 // {
-                    objetPresentArriere = true;
+                objetPresentArriere = true;
                 //     startDetectionArriere = millis();
                 // }
                 // else if (millis() - startDetectionArriere >= 50)
                 // {
-                    Serial.printf("Objet derrière\n");
-//                    sendCANMessage(LIDAR, 0, 0, 2, 0, ARRIERE_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0);
+                Serial.printf("Objet derrière\n");
+                //                    sendCANMessage(LIDAR, 0, 0, 2, 0, ARRIERE_LIDAR_DETECTER, 0, 0, 0, 0, 0, 0);
                 // }
             }
             else
             {
-                if (objetPresentArriere) {
+                if (objetPresentArriere)
+                {
                     Serial.printf("Fin objet derrière\n");
-//                    sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
+                    //                    sendCANMessage(LIDAR, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
                 objetPresentArriere = false;
             }
